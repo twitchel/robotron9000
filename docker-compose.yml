@@ -1,0 +1,32 @@
+version: '3'
+services:
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        env_file: .env
+        ports:
+            - '3306:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${MYSQL_PASSWORD}'
+            MYSQL_ROOT_HOST: '${MYSQL_PASSWORD}'
+            MYSQL_DATABASE: '${MYSQL_DATABASE}'
+            MYSQL_USER: '${MYSQL_USERNAME}'
+            MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'mysql:/var/lib/mysql'
+        networks:
+            - robotron
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - '-p${MYSQL_PASSWORD}'
+            retries: 3
+            timeout: 5s
+networks:
+    robotron:
+        driver: bridge
+volumes:
+    mysql:
+        driver: local
