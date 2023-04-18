@@ -5,11 +5,14 @@ import { CalculateNewLocationUseCase } from '../calculate-new-location.use-case'
 import { LocationDto } from '../../dtos/location.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IsGridReferenceEmptyUseCase } from '../is-grid-reference-empty.use-case';
+import { GridReferenceContainsBotError } from '../../error/grid-reference-contains-bot.error';
 
 @Injectable()
 export class MoveRobotUseCase {
   constructor(
     private readonly calculateNewLocationUseCase: CalculateNewLocationUseCase,
+    private readonly isGridReferenceEmptyUseCase: IsGridReferenceEmptyUseCase,
     @InjectRepository(RobotEntity)
     private readonly robotRepository: Repository<RobotEntity>,
   ) {}
@@ -25,9 +28,13 @@ export class MoveRobotUseCase {
       direction,
     );
 
-    return await this.robotRepository.save({
-      ...robot,
-      ...newLocation,
-    } as RobotEntity);
+    if (await this.isGridReferenceEmptyUseCase.run(newLocation)) {
+      return await this.robotRepository.save({
+        ...robot,
+        ...newLocation,
+      } as RobotEntity);
+    }
+
+    throw new GridReferenceContainsBotError();
   }
 }
