@@ -1,6 +1,5 @@
 import { RobotEntity } from '../../entities';
 import { Repository } from 'typeorm';
-import { IsGridReferenceEmptyUseCase } from '../is-grid-reference-empty.use-case';
 import { LocationDto } from '../../dtos/location.dto';
 import {
   Direction,
@@ -14,11 +13,11 @@ import { CalculateNewLocationUseCase } from '../calculate-new-location.use-case'
 import { GridReferenceContainsBotError } from '../../error/grid-reference-contains-bot.error';
 import { OutOfBoundsError } from '../../error/out-of-bounds.error';
 import { InvalidDirectionError } from '../../error/invalid-direction.error';
+import { FindRobotAtGridReferenceUseCase } from './find-robot-at-grid-reference.use-case';
 
 describe('MoveRobotsUseCase', () => {
-  let repository;
   let calculateNewLocationUseCase: CalculateNewLocationUseCase;
-  let isGridReferenceEmptyUseCase: IsGridReferenceEmptyUseCase;
+  let findRobotAtGridReferenceUseCase: FindRobotAtGridReferenceUseCase;
   let robotRepository: Repository<RobotEntity>;
   let useCase: MoveRobotUseCase;
 
@@ -32,9 +31,9 @@ describe('MoveRobotsUseCase', () => {
       run: jest.fn(),
     } as unknown as CalculateNewLocationUseCase;
 
-    isGridReferenceEmptyUseCase = {
+    findRobotAtGridReferenceUseCase = {
       run: jest.fn(),
-    } as unknown as IsGridReferenceEmptyUseCase;
+    } as unknown as FindRobotAtGridReferenceUseCase;
 
     robotRepository = {
       save: jest.fn(),
@@ -42,7 +41,7 @@ describe('MoveRobotsUseCase', () => {
 
     useCase = new MoveRobotUseCase(
       calculateNewLocationUseCase,
-      isGridReferenceEmptyUseCase,
+      findRobotAtGridReferenceUseCase,
       robotRepository,
     );
   });
@@ -65,7 +64,7 @@ describe('MoveRobotsUseCase', () => {
       ...newLocationDto,
     } as RobotEntity;
     calculateNewLocationUseCase.run = jest.fn().mockReturnValue(newLocationDto);
-    isGridReferenceEmptyUseCase.run = jest.fn().mockReturnValue(true);
+    findRobotAtGridReferenceUseCase.run = jest.fn().mockReturnValue(null);
     robotRepository.save = jest.fn().mockReturnValue(updatedRobotEntity);
 
     // when
@@ -77,7 +76,7 @@ describe('MoveRobotsUseCase', () => {
       locationDto,
       DIRECTION_WEST,
     );
-    expect(isGridReferenceEmptyUseCase.run).toHaveBeenCalledWith(
+    expect(findRobotAtGridReferenceUseCase.run).toHaveBeenCalledWith(
       newLocationDto,
     );
     expect(robotRepository.save).toHaveBeenCalledWith(updatedRobotEntity);
@@ -96,7 +95,9 @@ describe('MoveRobotsUseCase', () => {
     } as RobotEntity;
 
     calculateNewLocationUseCase.run = jest.fn().mockReturnValue(newLocationDto);
-    isGridReferenceEmptyUseCase.run = jest.fn().mockReturnValue(false);
+    findRobotAtGridReferenceUseCase.run = jest
+      .fn()
+      .mockReturnValue({ ...robotEntity, id: 2 } as RobotEntity);
 
     // when
     await expect(useCase.run(robotEntity, DIRECTION_EAST)).rejects.toThrow(
@@ -108,7 +109,7 @@ describe('MoveRobotsUseCase', () => {
       locationDto,
       DIRECTION_EAST,
     );
-    expect(isGridReferenceEmptyUseCase.run).toHaveBeenCalledWith(
+    expect(findRobotAtGridReferenceUseCase.run).toHaveBeenCalledWith(
       newLocationDto,
     );
     expect(robotRepository.save).not.toHaveBeenCalled();
@@ -132,7 +133,7 @@ describe('MoveRobotsUseCase', () => {
 
     // then
     expect(calculateNewLocationUseCase.run).not.toHaveBeenCalled();
-    expect(isGridReferenceEmptyUseCase.run).not.toHaveBeenCalled();
+    expect(findRobotAtGridReferenceUseCase.run).not.toHaveBeenCalled();
     expect(robotRepository.save).not.toHaveBeenCalled();
   });
 });
