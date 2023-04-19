@@ -1,3 +1,5 @@
+import { LocationDto } from './robots/dtos/location.dto';
+
 export const GRID_MIN = 1;
 export const GRID_MAX = 10;
 

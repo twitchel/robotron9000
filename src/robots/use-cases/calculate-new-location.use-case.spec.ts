@@ -1,12 +1,14 @@
 import { LocationDto } from '../dtos/location.dto';
 import { CalculateNewLocationUseCase } from './calculate-new-location.use-case';
 import {
+  Direction,
   DIRECTION_EAST,
   DIRECTION_NORTH,
   DIRECTION_SOUTH,
   DIRECTION_WEST,
 } from '../../constants';
 import { OutOfBoundsError } from '../error/out-of-bounds.error';
+import { InvalidDirectionError } from '../error/invalid-direction.error';
 
 describe('CalculateNewLocationUseCaseTest', () => {
   let useCase: CalculateNewLocationUseCase;
@@ -55,6 +57,12 @@ describe('CalculateNewLocationUseCaseTest', () => {
       expect(() => useCase.run(new LocationDto(1, 1), DIRECTION_NORTH)).toThrow(
         OutOfBoundsError,
       );
+    });
+
+    it('should throw and error if the robot attempts to move in an invalid direction', () => {
+      expect(() =>
+        useCase.run(new LocationDto(1, 1), 'ELEVENSIES' as Direction),
+      ).toThrow(InvalidDirectionError);
     });
   });
 });

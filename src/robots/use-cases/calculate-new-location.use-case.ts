@@ -7,40 +7,48 @@ import {
   DIRECTION_WEST,
   GRID_MAX,
   GRID_MIN,
+  ValidDirections,
 } from '../../constants';
 import { OutOfBoundsError } from '../error/out-of-bounds.error';
 import { Injectable } from '@nestjs/common';
+import { InvalidDirectionError } from '../error/invalid-direction.error';
+
+const movementCallbacks: Record<
+  Direction,
+  (location: LocationDto) => LocationDto
+> = {
+  [DIRECTION_NORTH]: (location: LocationDto) => {
+    return new LocationDto(location.locationX, location.locationY - 1);
+  },
+  [DIRECTION_SOUTH]: (location: LocationDto) => {
+    return new LocationDto(location.locationX, location.locationY + 1);
+  },
+  [DIRECTION_EAST]: (location: LocationDto) => {
+    return new LocationDto(location.locationX + 1, location.locationY);
+  },
+  [DIRECTION_WEST]: (location: LocationDto) => {
+    return new LocationDto(location.locationX - 1, location.locationY);
+  },
+};
 
 @Injectable()
 export class CalculateNewLocationUseCase {
   public run(currentLocation: LocationDto, direction: Direction): LocationDto {
-    let locationX = currentLocation.locationX ?? 1;
-    let locationY = currentLocation.locationY ?? 1;
-
-    switch (direction) {
-      case DIRECTION_NORTH:
-        locationY--;
-        break;
-      case DIRECTION_SOUTH:
-        locationY++;
-        break;
-      case DIRECTION_EAST:
-        locationX++;
-        break;
-      case DIRECTION_WEST:
-        locationX--;
-        break;
+    if (!ValidDirections.includes(direction)) {
+      throw new InvalidDirectionError();
     }
 
+    const newLocation = movementCallbacks[direction](currentLocation);
+
     if (
-      locationX > GRID_MAX ||
-      locationX < GRID_MIN ||
-      locationY > GRID_MAX ||
-      locationY < GRID_MIN
+      newLocation.locationX > GRID_MAX ||
+      newLocation.locationX < GRID_MIN ||
+      newLocation.locationY > GRID_MAX ||
+      newLocation.locationY < GRID_MIN
     ) {
       throw new OutOfBoundsError();
     }
 
-    return new LocationDto(locationX, locationY);
+    return newLocation;
   }
 }
