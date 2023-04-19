@@ -25,10 +25,10 @@ export class CalculateNewLocationUseCase {
         locationY++;
         break;
       case DIRECTION_EAST:
-        locationX--;
+        locationX++;
         break;
       case DIRECTION_WEST:
-        locationX++;
+        locationX--;
         break;
     }
 
