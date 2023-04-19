@@ -58,7 +58,7 @@ export class RobotController {
     } catch (e) {
       if (e instanceof GridReferenceContainsBotError) {
         throw new HttpException(
-          'Cannot move robot, a robot is currently sitting in position',
+          `Cannot move robot, another robot is currently sitting in the direction ${direction} of this bot`,
           HttpStatus.BAD_REQUEST,
         );
       } else {
