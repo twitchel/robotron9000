@@ -17,6 +17,7 @@ import { MoveRobotUseCase } from '../use-cases/location/move-robot.use-case';
 import { FindRobotUseCase } from '../use-cases/robot/find-robot.use-case';
 import { NotFoundError } from 'rxjs';
 import { Direction, ValidDirections } from '../../constants';
+import { EntityNotFoundError } from 'typeorm';
 
 @Controller()
 export class RobotController {
@@ -60,6 +61,11 @@ export class RobotController {
         throw new HttpException(
           `Cannot move robot, another robot is currently sitting in the direction ${direction} of this bot`,
           HttpStatus.BAD_REQUEST,
+        );
+      } else if (e instanceof EntityNotFoundError) {
+        throw new HttpException(
+          `Robot ID ${id} not found`,
+          HttpStatus.NOT_FOUND,
         );
       } else {
         throw new HttpException(e.message, HttpStatus.BAD_REQUEST);

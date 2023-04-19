@@ -10,6 +10,6 @@ export class FindRobotUseCase {
     private readonly robotRepository: Repository<RobotEntity>,
   ) {}
   public async run(id: number): Promise<RobotEntity> {
-    return this.robotRepository.findOneBy({ id });
+    return this.robotRepository.findOneByOrFail({ id });
   }
 }

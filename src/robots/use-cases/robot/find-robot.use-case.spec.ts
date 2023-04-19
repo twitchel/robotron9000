@@ -14,7 +14,7 @@ describe('FindRobotsUseCase', () => {
     } as RobotEntity;
 
     const mockRepository = {
-      findOneBy: jest.fn().mockReturnValue(robot),
+      findOneByOrFail: jest.fn().mockReturnValue(robot),
     } as unknown as Repository<RobotEntity>;
 
     const useCase = new FindRobotUseCase(mockRepository);
