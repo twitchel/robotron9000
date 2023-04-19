@@ -7,10 +7,7 @@ import { ListRobotsUseCase } from './robot/list-robots.use-case';
 
 @Injectable()
 export class IsGridReferenceEmptyUseCase {
-  constructor(
-    @InjectRepository(RobotEntity)
-    private readonly listRobotsUseCase: ListRobotsUseCase,
-  ) {}
+  constructor(private readonly listRobotsUseCase: ListRobotsUseCase) {}
   public async run(location: LocationDto): Promise<boolean> {
     const robots = await this.listRobotsUseCase.run();
 
