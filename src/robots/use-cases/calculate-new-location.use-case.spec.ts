@@ -38,14 +38,14 @@ describe('CalculateNewLocationUseCaseTest', () => {
     it('should return a new location when moving E', () => {
       const newLocation = useCase.run(initialLocation, DIRECTION_EAST);
 
-      expect(newLocation.locationX).toBe(4);
+      expect(newLocation.locationX).toBe(6);
       expect(newLocation.locationY).toBe(5);
     });
 
     it('should return a new location when moving W', () => {
       const newLocation = useCase.run(initialLocation, DIRECTION_WEST);
 
-      expect(newLocation.locationX).toBe(6);
+      expect(newLocation.locationX).toBe(4);
       expect(newLocation.locationY).toBe(5);
     });
   });
