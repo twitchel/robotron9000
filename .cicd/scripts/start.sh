@@ -7,4 +7,3 @@ BASE_DIR="${SCRIPT_DIR}/../.."
 
 cd "${BASE_DIR}"
 docker-compose up -d
-npm run start:dev

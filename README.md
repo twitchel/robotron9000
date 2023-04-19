@@ -31,6 +31,12 @@ To shutdown supporting services, run:
 make stop
 ```
 
+To run the test suite:
+
+```bash
+make tests
+```
+
 ## API Endpoints
 
 Once the service has started, you have the following endpoints available for you

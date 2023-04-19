@@ -33,13 +33,16 @@ build:
 	@./.cicd/scripts/build.sh
 
 ## Start the Robotron 9000 service (backgrounded)
-start: build
-	@./.cicd/scripts/start.sh
+start: build _startServices
+	@npm run start:dev
 
 ## Stop the Robotron 9000 service
 stop:
 	@./.cicd/scripts/stop.sh
 
-## Run commands directly in robotron land
-exec: build start
-	@./vendor/bin/sail
+## Run test suite
+tests: _startServices
+	@npm run test
+
+_startServices:
+	@./.cicd/scripts/start.sh
