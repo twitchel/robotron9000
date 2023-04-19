@@ -13,6 +13,12 @@ If you need to install Node 16, you can install using nvm (`nvm install lts/gall
 
 ## Getting started
 
+Run `make` to see the full list of commands available
+
+```bash
+make
+```
+
 Prep the local environment to run the app
 
 ```bash
@@ -59,3 +65,22 @@ This will create a new robot and place it in the far north-west corner of the wa
 ```
 
 This will let you move a robot in an allowed direction (`N`, `S`, `E` or `W`). If a bot is currently sitting in that square, the request will fail. 
+
+### Bulk Move Robot
+```
+[POST] http://localhost:3000/api/robots/{ROBOT_ID}/move
+
+Body {
+    movements: "N S E W"
+}
+```
+
+This will let you move a robot in a set of allowed directions.
+
+Rules:
+- `movements` must be a string containing only valid directions (`N`, `S`, `E` or `W`)
+- directions must be delineated by a space
+- Multiple spaces and lowercase directions are allowed, they will be sanitised
+- If an invalid direction is encountered, the movement set will not be processed
+- If a direction in the set would send the robot out of bounds, the movement set will not be processed
+- If a collision with another robot would occur as part o the set, the movement set will not be processed.
