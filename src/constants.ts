@@ -9,4 +9,11 @@ export const DIRECTION_SOUTH = 'S';
 export const DIRECTION_EAST = 'E';
 export const DIRECTION_WEST = 'W';
 
+export const ValidDirections = [
+  DIRECTION_NORTH,
+  DIRECTION_SOUTH,
+  DIRECTION_EAST,
+  DIRECTION_WEST,
+];
+
 export type Direction = 'N' | 'S' | 'E' | 'W';

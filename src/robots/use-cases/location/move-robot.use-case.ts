@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Direction } from '../../../constants';
+import { Direction, ValidDirections } from '../../../constants';
 import { RobotEntity } from '../../entities';
 import { CalculateNewLocationUseCase } from '../calculate-new-location.use-case';
 import { LocationDto } from '../../dtos/location.dto';
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsGridReferenceEmptyUseCase } from '../is-grid-reference-empty.use-case';
 import { GridReferenceContainsBotError } from '../../error/grid-reference-contains-bot.error';
+import { InvalidDirectionError } from '../../error/invalid-direction.error';
 
 @Injectable()
 export class MoveRobotUseCase {
@@ -21,6 +22,10 @@ export class MoveRobotUseCase {
     robot: RobotEntity,
     direction: Direction,
   ): Promise<RobotEntity> {
+    if (!ValidDirections.includes(direction)) {
+      throw new InvalidDirectionError(direction);
+    }
+
     const currentLocation = new LocationDto(robot.locationX, robot.locationY);
 
     const newLocation = this.calculateNewLocationUseCase.run(

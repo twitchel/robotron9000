@@ -16,7 +16,7 @@ import { Request } from 'express';
 import { MoveRobotUseCase } from '../use-cases/location/move-robot.use-case';
 import { FindRobotUseCase } from '../use-cases/robot/find-robot.use-case';
 import { NotFoundError } from 'rxjs';
-import { Direction } from '../../constants';
+import { Direction, ValidDirections } from '../../constants';
 
 @Controller()
 export class RobotController {
@@ -58,7 +58,7 @@ export class RobotController {
     } catch (e) {
       if (e instanceof GridReferenceContainsBotError) {
         throw new HttpException(
-          'Cannot create robot, a robot is currently sitting in position',
+          'Cannot move robot, a robot is currently sitting in position',
           HttpStatus.BAD_REQUEST,
         );
       } else {
